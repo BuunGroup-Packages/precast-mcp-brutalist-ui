@@ -1,0 +1,70 @@
+{
+  "name": "@buun_group/brutalist-ui-mcp-server",
+  "version": "1.0.0",
+  "description": "A Model Context Protocol (MCP) server for Brutalist UI components, providing AI assistants with access to component source code, examples, styles, and metadata from the Precast Brutalist UI registry.",
+  "type": "module",
+  "main": "./build/index.js",
+  "private": false,
+  "bin": {
+    "precast-brutalist-mcp": "./build/index.js",
+    "brutalist-ui-mcp": "./build/index.js"
+  },
+  "files": [
+    "build/**/*",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf build",
+    "prepublishOnly": "npm run clean && npm run build && chmod +x build/index.js",
+    "start": "node build/index.js",
+    "dev": "tsc && node build/index.js",
+    "test": "node test-runner.js",
+    "test:quick": "node tests/quick-test.js",
+    "test:all": "node tests/all-components-test.js",
+    "test:full": "node --test tests/mcp-tools.test.js",
+    "test:report": "node tests/generate-report.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "brutalist-ui",
+    "precast",
+    "ui-components",
+    "react",
+    "typescript",
+    "ai-tools",
+    "claude",
+    "registry",
+    "design-system"
+  ],
+  "author": "Sacha Roussakis-Notter <sacha.roiussakis-notter@precast.dev>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://buungroup.com"
+  },
+  "homepage": "https://brutalist.precast.dev",
+  "bugs": {
+    "url": "https://github.com/precast-dev/brutalist-components/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.1.0",
+    "axios": "^1.8.4",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.2",
+    "node-fetch": "^3.3.2"
+  }
+}

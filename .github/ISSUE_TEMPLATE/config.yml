@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Documentation
+    url: https://brutalist.precast.dev/docs
+    about: Read the official documentation for usage guides and API reference
+  - name: 💬 Discussions
+    url: https://github.com/precast-org/brutalist-components/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 🚀 Brutalist UI Registry
+    url: https://brutalist.precast.dev
+    about: Browse the component registry and explore available components
