@@ -1,11 +1,11 @@
-# @precast/brutalist-ui-mcp-server
+# @buun_group/brutalist-ui-mcp-server
 
 A Model Context Protocol (MCP) server for Brutalist UI components, providing AI assistants with access to component source code, examples, styles, and metadata from the Precast Brutalist UI registry.
 
 ## Installation
 
 ```bash
-npm install -g @precast/brutalist-ui-mcp-server
+npm install -g @buun_group/brutalist-ui-mcp-server
 ```
 
 ## Quick Start
@@ -14,7 +14,7 @@ After installation, add the MCP server to your Claude Code configuration:
 
 ```bash
 # Add to Claude Code
-claude mcp add brutalist-ui npx @precast/brutalist-ui-mcp-server
+claude mcp add brutalist-ui npx @buun_group/brutalist-ui-mcp-server
 
 # Verify installation
 claude mcp list
@@ -24,9 +24,11 @@ claude mcp list
 
 ### Standalone
 ```bash
-npx @precast/brutalist-ui-mcp-server
+npx @buun_group/brutalist-ui-mcp-server
 # or if installed globally
 precast-brutalist-mcp
+# or
+brutalist-ui-mcp
 ```
 
 ### With Claude Desktop
@@ -37,7 +39,7 @@ Add to your Claude Desktop MCP configuration:
   "mcpServers": {
     "brutalist-ui": {
       "command": "npx",
-      "args": ["@precast/brutalist-ui-mcp-server"]
+      "args": ["@buun_group/brutalist-ui-mcp-server"]
     }
   }
 }
@@ -258,7 +260,7 @@ Add the MCP server to Claude Code using the `claude mcp add` command:
 claude mcp add brutalist-ui node /home/sacha/repositories/brutalist-components/packages/mcp/precast-mcp-brutalist-ui/build/index.js
 
 # For production (uses published npm package)
-claude mcp add brutalist-ui npx @precast/brutalist-ui-mcp-server
+claude mcp add brutalist-ui npx @buun_group/brutalist-ui-mcp-server
 
 # View available MCP servers
 claude mcp list
@@ -624,12 +626,109 @@ Help me build a user registration form:
 
 This MCP server is your gateway to mastering Brutalist UI components! 🎉
 
-### **For NPM Publication:**
+## 📦 NPM Package Installation
+
+### Install from NPM
+
+Once published, users can install the MCP server globally:
 
 ```bash
-# In the package directory
-npm run build
+# Install globally
+npm install -g @buun_group/brutalist-ui-mcp-server
+
+# Or use with npx (no installation needed)
+npx @buun_group/brutalist-ui-mcp-server
+```
+
+### Add to Claude Desktop
+
+Add to your Claude Desktop MCP configuration (`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "brutalist-ui": {
+      "command": "npx",
+      "args": ["@buun_group/brutalist-ui-mcp-server"]
+    }
+  }
+}
+```
+
+### Add to Claude Code
+
+```bash
+# Add MCP server to Claude Code
+claude mcp add brutalist-ui npx @buun_group/brutalist-ui-mcp-server
+
+# Verify it's added
+claude mcp list
+
+# Use in Claude Code
+# Type @ to see resources: @brutalist-ui:brutalist-ui://registry/overview
+# Type / to see tools: /mcp__brutalist-ui__get_component button
+```
+
+### CLI Usage
+
+After global installation, use the CLI commands:
+
+```bash
+# Start the MCP server
+precast-brutalist-mcp
+
+# Or alternative command
+brutalist-ui-mcp
+
+# Show help
+precast-brutalist-mcp --help
+
+# Show version
+precast-brutalist-mcp --version
+
+# Use custom registry URL
+precast-brutalist-mcp --registry-url https://custom-registry.com
+```
+
+## 🚀 Publishing to NPM
+
+### For Package Maintainers
+
+To publish this package to NPM:
+
+```bash
+# 1. Make sure you're logged in to NPM
+npm whoami
+
+# 2. If not logged in
+npm login
+
+# 3. Build the package
+bun run build
+
+# 4. Publish to NPM
+npm publish
+
+# 5. For updates, increment version first
+npm version patch  # 1.0.0 → 1.0.1
+npm version minor  # 1.0.0 → 1.1.0
+npm version major  # 1.0.0 → 2.0.0
+
+# 6. Then publish again
 npm publish
 ```
+
+### Package Details
+
+- **Package Name**: `@buun_group/brutalist-ui-mcp-server`
+- **Scope**: `@buun_group` (public scoped package)
+- **CLI Commands**: `precast-brutalist-mcp`, `brutalist-ui-mcp`
+- **Main Entry**: `./build/index.js`
+- **License**: MIT
+
+The `prepublishOnly` script automatically:
+- Cleans the build directory
+- Compiles TypeScript
+- Makes the CLI executable
 
 The MCP server is now ready to serve your Brutalist UI components to AI assistants, with automatic environment detection for development vs production!

@@ -1,6 +1,6 @@
 {
   "name": "@buun_group/brutalist-ui-mcp-server",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A Model Context Protocol (MCP) server for Brutalist UI components, providing AI assistants with access to component source code, examples, styles, and metadata from the Precast Brutalist UI registry.",
   "type": "module",
   "main": "./build/index.js",

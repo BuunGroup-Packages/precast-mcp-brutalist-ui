@@ -15,8 +15,9 @@ Brutalist UI MCP Server
 A Model Context Protocol server providing access to Brutalist UI components registry.
 
 Usage:
-  npx @precast/brutalist-ui-mcp-server [options]
+  npx @buun_group/brutalist-ui-mcp-server [options]
   precast-brutalist-mcp [options]
+  brutalist-ui-mcp [options]
 
 Options:
   --help, -h                      Show this help message
@@ -24,8 +25,9 @@ Options:
   --registry-url <url>            Override default registry URL
 
 Examples:
-  npx @precast/brutalist-ui-mcp-server
+  npx @buun_group/brutalist-ui-mcp-server
   precast-brutalist-mcp --registry-url https://custom-registry.com
+  brutalist-ui-mcp
 
 Registry:
   Default: https://brutalist.precast.dev/registry/react
@@ -58,9 +60,9 @@ For more information, visit: https://brutalist.precast.dev
       
       const packageContent = fs.readFileSync(packagePath, 'utf8');
       const packageJson = JSON.parse(packageContent);
-      console.log(`@precast/brutalist-ui-mcp-server v${packageJson.version}`);
+      console.log(`${packageJson.name} v${packageJson.version}`);
     } catch (error) {
-      console.log('@precast/brutalist-ui-mcp-server v1.0.0');
+      console.log('@buun_group/brutalist-ui-mcp-server v1.0.0');
     }
     process.exit(0);
   }
@@ -80,11 +82,19 @@ async function main() {
   try {
     const { registryUrl } = await parseArgs();
     if (registryUrl) {
+      process.env.REGISTRY_BASE_URL = registryUrl;
       console.error(`Using custom registry URL: ${registryUrl}`);
     } else {
-      const baseUrl = process.env.NODE_ENV === 'production' 
-        ? 'https://brutalist.precast.dev'
-        : 'http://localhost:3000';
+      // Only use localhost if explicitly in development mode
+      const isDev = process.env.NODE_ENV === 'development' || 
+                   process.env.NODE_ENV === 'dev' ||
+                   process.argv.includes('--dev');
+      
+      const baseUrl = isDev 
+        ? 'http://localhost:3000'
+        : 'https://brutalist.precast.dev';
+      
+      process.env.REGISTRY_BASE_URL = `${baseUrl}/registry/react`;
       console.error(`Using registry: ${baseUrl}/registry/react`);
     }
     const server = new Server(

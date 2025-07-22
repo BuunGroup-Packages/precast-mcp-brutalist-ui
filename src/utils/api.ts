@@ -2,9 +2,8 @@ import axios from 'axios';
 import { RegistryIndexSchema, ComponentSchema } from '../schemas/registry.js';
 import type { RegistryIndex, Component, RegistryComponent } from '../schemas/registry.js';
 
-const REGISTRY_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://brutalist.precast.dev/registry/react'
-  : 'http://localhost:3000/registry/react';
+// Use environment variable if set, otherwise default to production
+const REGISTRY_BASE_URL = process.env.REGISTRY_BASE_URL || 'https://brutalist.precast.dev/registry/react';
 
 const cache = new Map<string, { data: unknown; timestamp: number }>();
 const CACHE_TTL = 5 * 60 * 1000;
