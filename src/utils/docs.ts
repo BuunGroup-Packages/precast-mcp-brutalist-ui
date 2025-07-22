@@ -60,38 +60,100 @@ export interface DocumentationSection {
  */
 export async function extractComponentDocumentation(componentName: string): Promise<DocumentationSection> {
   try {
-    let docsPath = '';
-    if (componentName === 'aspect-ratio') {
-      docsPath = `/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/aspect-ratio.tsx`;
-    } else if (componentName === 'pagination') {
-      docsPath = `/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/pagination.tsx`;
-    } else if (componentName === 'bar-chart') {
-      docsPath = `/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/BarChartPage.tsx`;
-    } else if (componentName === 'line-chart') {
-      docsPath = `/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/LineChartPage.tsx`;
-    } else if (componentName === 'table-of-contents') {
-      docsPath = `/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/TableOfContentsPage.tsx`;
-    } else if (componentName === 'shapes') {
-      docsPath = `/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/ShapesPage.tsx`;
-    } else {
-      docsPath = `/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/${componentName.charAt(0).toUpperCase() + componentName.slice(1)}Page.tsx`;
+    const fs = await import('fs');
+    
+    // Try multiple potential paths for the documentation
+    const potentialPaths = [
+      `/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/${componentName.charAt(0).toUpperCase() + componentName.slice(1)}Page.tsx`,
+      `/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/${componentName}.tsx`,
+      `/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/BarChartPage.tsx`,
+      `/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/LineChartPage.tsx`,
+      `/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/TableOfContentsPage.tsx`,
+      `/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/ShapesPage.tsx`,
+      `/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/aspect-ratio.tsx`,
+      `/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/pagination.tsx`
+    ];
+    
+    // Special cases
+    const specialCases: Record<string, string> = {
+      'bar-chart': '/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/BarChartPage.tsx',
+      'line-chart': '/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/LineChartPage.tsx',
+      'table-of-contents': '/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/TableOfContentsPage.tsx',
+      'shapes': '/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/ShapesPage.tsx',
+      'pagination': '/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/pagination.tsx',
+      'aspect-ratio': '/home/sacha/repositories/brutalist-components/apps/website/src/pages/docs/components/aspect-ratio.tsx'
+    };
+    
+    let content = '';
+    let foundPath = '';
+    
+    // Check special cases first
+    if (specialCases[componentName]) {
+      try {
+        content = fs.readFileSync(specialCases[componentName], 'utf8');
+        foundPath = specialCases[componentName];
+      } catch (e) {
+        // Continue to try other paths
+      }
     }
     
-    const fs = await import('fs');
-    const content = fs.readFileSync(docsPath, 'utf8');
+    // If no special case worked, try standard paths
+    if (!content) {
+      for (const potentialPath of potentialPaths) {
+        try {
+          if (fs.existsSync(potentialPath)) {
+            content = fs.readFileSync(potentialPath, 'utf8');
+            foundPath = potentialPath;
+            break;
+          }
+        } catch (e) {
+          // Continue trying other paths
+        }
+      }
+    }
+    
+    // If still no content found, return basic documentation
+    if (!content) {
+      return {
+        title: componentName.charAt(0).toUpperCase() + componentName.slice(1),
+        description: `Documentation for ${componentName} component`,
+        content: `# ${componentName.charAt(0).toUpperCase() + componentName.slice(1)} Component\n\nDocumentation file not found. Please check the component's source code for implementation details.`,
+        examples: [],
+        accessibility: {
+          keyboardSupport: [],
+          ariaAttributes: [],
+          bestPractices: []
+        }
+      };
+    }
     
     const documentation: DocumentationSection = {
-      title: extractTitle(content),
-      description: extractDescription(content),
-      content: extractMainContent(content),
+      title: extractTitle(content) || (componentName.charAt(0).toUpperCase() + componentName.slice(1)),
+      description: extractDescription(content) || `${componentName} component`,
+      content: extractMainContent(content) || `Documentation loaded from: ${foundPath}`,
       examples: extractExamples(content),
-      accessibility: extractAccessibility(content),
+      accessibility: extractAccessibility(content) || {
+        keyboardSupport: [],
+        ariaAttributes: [],
+        bestPractices: []
+      },
       apiReference: extractAPIReference(content)
     };
 
     return documentation;
   } catch (error) {
-    throw new Error(`Failed to extract documentation for ${componentName}: ${error instanceof Error ? error.message : String(error)}`);
+    // Return a fallback documentation structure instead of throwing
+    return {
+      title: componentName.charAt(0).toUpperCase() + componentName.slice(1),
+      description: `Documentation for ${componentName} component`,
+      content: `# ${componentName.charAt(0).toUpperCase() + componentName.slice(1)} Component\n\nError loading documentation: ${error instanceof Error ? error.message : String(error)}`,
+      examples: [],
+      accessibility: {
+        keyboardSupport: [],
+        ariaAttributes: [],
+        bestPractices: []
+      }
+    };
   }
 }
 

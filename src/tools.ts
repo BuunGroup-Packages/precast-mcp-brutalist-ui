@@ -216,6 +216,7 @@ export const toolHandlers = {
         : 'http://localhost:3000';
       
       return createSuccessResponse({
+        componentName,
         component,
         installCommand: `precast-ui add "${baseUrl}/registry/react/${componentName}"`,
         registryUrl: `${baseUrl}/registry/react/${componentName}.json`,
@@ -322,7 +323,10 @@ export const toolHandlers = {
   get_featured_components: async () => {
     try {
       const featured = await getFeaturedComponents();
-      return createSuccessResponse(featured);
+      return createSuccessResponse({
+        featuredComponents: featured.components,
+        total: featured.total
+      });
     } catch (error) {
       createErrorResponse(`Failed to get featured components: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -331,7 +335,10 @@ export const toolHandlers = {
   get_registry_info: async () => {
     try {
       const info = await getRegistryInfo();
-      return createSuccessResponse(info);
+      return createSuccessResponse({
+        ...info.registry,
+        stats: info.stats
+      });
     } catch (error) {
       createErrorResponse(`Failed to get registry info: ${error instanceof Error ? error.message : String(error)}`);
     }
